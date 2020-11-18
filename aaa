@@ -6,3 +6,284 @@
     八进制表示法新写法：前缀0o和0O
     console.log(0o11 === 9); // true
     console.log(0O11 === 9); // true
+  1.2 常量
+    Nnmber.EPSILON    表示1与大于1的最小浮点数之间的差
+    测试数值是否在误差范围内
+    0.1 + 0.2 === 0.3  false
+    在误差范围内即视为相等
+    equal = (Math.abs(0.1-0.3+0.2)<Number.EPSILON);  true
+ 1.3 最大最小安全整数
+    安全整数：表示在javascript中能够精确表示的整数，安全整数的范围在 2 的 -53 次方到 2 的 53 次方之间（不包括两个端点），超过这个范围的整数无法精确表示。
+    最大安全整数：安全整数范围的上限，即 2 的 53 次方减 1 。
+    Number.MAX_SAFE_INTEGER + 1 === Number.MAX_SAFE_INTEGER + 2; // true
+    Number.MAX_SAFE_INTEGER === Number.MAX_SAFE_INTEGER + 1;     // false
+    Number.MAX_SAFE_INTEGER - 1 === Number.MAX_SAFE_INTEGER - 2; // false
+    最小安全整数：安全整数范围的下限，即 2 的 53 次方减 1 的负数。
+    Number.MIN_SAFE_INTEGER + 1 === Number.MIN_SAFE_INTEGER + 2; // false
+    Number.MIN_SAFE_INTEGER === Number.MIN_SAFE_INTEGER - 1;     // false
+    Number.MIN_SAFE_INTEGER - 1 === Number.MIN_SAFE_INTEGER - 2; // true
+2、Number新方法
+    Number.isFinite()
+    用于检查一个数值知否为有限的（finite）,即Infinite
+    console.log( Number.isFinite(1));   // true
+    console.log( Number.isFinite(0.1)); // true
+ 
+    // NaN 不是有限的
+    console.log( Number.isFinite(NaN)); // false
+ 
+    console.log( Number.isFinite(Infinity));  // false
+    console.log( Number.isFinite(-Infinity)); // false
+ 
+    // Number.isFinate 没有隐式的 Number() 类型转换，所有非数值都返回 false
+    console.log( Number.isFinite('foo')); // false
+    console.log( Number.isFinite('15'));  // false
+    console.log( Number.isFinite(true));  // false
+    Number.isNaN()
+    用于检查一个值是否为 NaN 。
+    console.log(Number.isNaN(NaN));      // true
+    console.log(Number.isNaN('true'/0)); // true
+ 
+    // 在全局的 isNaN() 中，以下皆返回 true，因为在判断前会将非数值向数值转换
+    // 而 Number.isNaN() 不存在隐式的 Number() 类型转换，非 NaN 全部返回 false
+    Number.isNaN("NaN");      // false
+    Number.isNaN(undefined);  // false
+    Number.isNaN({});         // false
+    Number.isNaN("true");     // false
+    从全局移植到 Number 对象的方法
+    逐步减少全局方法，用于全局变量的模块化。
+    方法的行为没有发生改变。
+    Number.parseInt()
+    用于将给定字符串转化为指定进制的整数。
+    // 不指定进制时默认为 10 进制
+    Number.parseInt('12.34'); // 12
+    Number.parseInt(12.34);   // 12
+ 
+    // 指定进制
+    Number.parseInt('0011',2); // 3
+ 
+    // 与全局的 parseInt() 函数是同一个函数
+    Number.parseInt === parseInt; // true
+    Number.parseFloat()
+    用于把一个字符串解析成浮点数。
+    Number.parseFloat('123.45')    // 123.45
+    Number.parseFloat('123.45abc') // 123.45
+ 
+    // 无法被解析成浮点数，则返回 NaN
+    Number.parseFloat('abc') // NaN
+ 
+    // 与全局的 parseFloat() 方法是同一个方法
+    Number.parseFloat === parseFloat // true
+    Number.isInteger()
+    用于判断给定的参数是否为整数。
+    Number.isInteger(value)
+    Number.isInteger(0); // true
+    // JavaScript 内部，整数和浮点数采用的是同样的储存方法,因此 1 与 1.0 被视为相同的值
+    Number.isInteger(1);   // true
+    Number.isInteger(1.0); // true
+ 
+    Number.isInteger(1.1);     // false
+    Number.isInteger(Math.PI); // false
+ 
+    // NaN 和正负 Infinity 不是整数
+    Number.isInteger(NaN);       // false
+    Number.isInteger(Infinity);  // false
+    Number.isInteger(-Infinity); // false
+ 
+    Number.isInteger("10");  // false
+    Number.isInteger(true);  // false
+    Number.isInteger(false); // false
+    Number.isInteger([1]);   // false
+ 
+    // 数值的精度超过 53 个二进制位时，由于第 54 位及后面的位被丢弃，会产生误判
+    Number.isInteger(1.0000000000000001) // true
+ 
+    // 一个数值的绝对值小于 Number.MIN_VALUE（5E-324），即小于 JavaScript 能够分辨
+    // 的最小值，会被自动转为 0，也会产生误判
+    Number.isInteger(5E-324); // false
+    Number.isInteger(5E-325); // true
+    Number.isSafeInteger()
+    用于判断数值是否在安全范围内。
+    Number.isSafeInteger(Number.MIN_SAFE_INTEGER - 1); // false
+    Number.isSafeInteger(Number.MAX_SAFE_INTEGER + 1); // false
+3、Math对象的扩展
+    es6在Math对象上新增了17个数学相关的静态方法，这些方法只能在Math中调用。
+        Math.cbrt  用来计算一个数的立方根
+            Math.cbrt(1);  // 1
+            Math.cbrt(0);  // 0
+            Math.cbrt(-1); // -1
+            // 会对非数值进行转换
+            Math.cbrt('1'); // 1
+ 
+            // 非数值且无法转换为数值时返回 NaN
+            Math.cbrt('hhh'); // NaN
+        Math.imul  两个数以 32 位带符号整数形式相乘的结果，返回的也是一个 32 位的带符号整数。
+            // 大多数情况下，结果与 a * b 相同 
+            Math.imul(1, 2);   // 2
+ 
+            // 用于正确返回大数乘法结果中的低位数值
+            Math.imul(0x7fffffff, 0x7fffffff); // 1
+        Math.hypot  用于计算所有参数的平方和的平方根。
+            Math.hypot(3, 4); // 5
+ 
+            // 非数值会先被转换为数值后进行计算
+            Math.hypot(1, 2, '3'); // 3.741657386773941
+            Math.hypot(true);      // 1
+            Math.hypot(false);     // 0
+
+            // 空值会被转换为 0
+            Math.hypot();   // 0
+            Math.hypot([]); // 0
+
+            // 参数为 Infinity 或 -Infinity 返回 Infinity
+            Math.hypot(Infinity); // Infinity
+            Math.hypot(-Infinity); // Infinity
+
+            // 参数中存在无法转换为数值的参数时返回 NaN
+            Math.hypot(NaN);         // NaN
+            Math.hypot(3, 4, 'foo'); // NaN
+            Math.hypot({});          // NaN
+        Math.clz32  用于返回数字的32 位无符号整数形式的前导0的个数。
+            Math.clz32(0); // 32
+            Math.clz32(1); // 31
+            Math.clz32(0b01000000000100000000000000000000); // 1
+
+            // 当参数为小数时，只考虑整数部分
+            Math.clz32(0.5); // 32
+
+            // 对于空值或非数值，会转化为数值再进行计算
+            Math.clz32('1');       // 31
+            Math.clz32();          // 32
+            Math.clz32([]);        // 32
+            Math.clz32({});        // 32
+            Math.clz32(NaN);       // 32
+            Math.clz32(Infinity);  // 32
+            Math.clz32(-Infinity); // 32
+            Math.clz32(undefined); // 32
+            Math.clz32('hhh');     // 32
+        Math.trunc  用于返回数字的整数部分。
+            Math.trunc(12.3); // 12
+            Math.trunc(12);   // 12
+
+            // 整数部分为 0 时也会判断符号
+            Math.trunc(-0.5); // -0
+            Math.trunc(0.5);  // 0
+
+            // Math.trunc 会将非数值转为数值再进行处理
+            Math.trunc("12.3"); // 12
+
+            // 空值或无法转化为数值时时返回 NaN
+            Math.trunc();           // NaN
+            Math.trunc(NaN);        // NaN
+            Math.trunc("hhh");      // NaN
+            Math.trunc("123.2hhh"); // NaN
+        Math.fround  用于获取数字的32位单精度浮点数形式。
+            // 对于 2 的 24 次方取负至 2 的 24 次方之间的整数（不含两个端点），返回结果与参数本身一致
+            Math.fround(-(2**24)+1);  // -16777215
+            Math.fround(2 ** 24 - 1); // 16777215
+
+            // 用于将 64 位双精度浮点数转为 32 位单精度浮点数
+            Math.fround(1.234) // 1.125
+            // 当小数的精度超过 24 个二进制位，会丢失精度
+            Math.fround(0.3); // 0.30000001192092896
+            // 参数为 NaN 或 Infinity 时返回本身
+            Math.fround(NaN)      // NaN
+            Math.fround(Infinity) // Infinity
+
+            // 参数为其他非数值类型时会将参数进行转换 
+            Math.fround('5');  // 5
+            Math.fround(true); // 1
+            Math.fround(null); // 0
+            Math.fround([]);   // 0
+            Math.fround({});   // NaN
+        Math.sign  判断数字的符号（正、负、0）。
+        Math.expm1()  用于计算 e 的 x 次方减 1 的结果，即 Math.exp(x) - 1 。
+        Math.log1p(x)  用于计算1 + x 的自然对数，即 Math.log(1 + x) 。
+        Math.log10(x)  用于计算以 10 为底的 x 的对数。
+        Math.log2()  用于计算 2 为底的 x 的对数。 
+        Math.sinh(x): 用于计算双曲正弦。
+        Math.cosh(x): 用于计算双曲余弦。
+        Math.tanh(x): 用于计算双曲正切。
+        Math.asinh(x): 用于计算反双曲正弦。
+        Math.acosh(x): 用于计算反双曲余弦。
+        Math.atanh(x): 用于计算反双曲正切。
+2、对象：
+    对象字面量
+        属性的简洁表示法：
+            ES6允许对象的属性直接写变量，这时候属性名是变量名，属性值是变量值。
+            const age = 12;
+            const name = "Amy";
+            const person = {age, name};
+            person   //{age: 12, name: "Amy"}
+            //等同于
+            const person = {age: age, name: name}
+        方法名也可以简写：
+          const person = {
+            sayHi(){
+              console.log("Hi");
+            }
+          }
+          person.sayHi();  //"Hi"
+          //等同于
+          const person = {
+            sayHi:function(){
+              console.log("Hi");
+            }
+          }
+          person.sayHi();//"Hi"
+        如果是Generator 函数，则要在前面加一个星号:
+          const obj = {
+            * myGenerator() {
+              yield 'hello world';
+            }
+          };
+          //等同于
+          const obj = {
+            myGenerator: function* () {
+              yield 'hello world';
+            }
+          };
+       属性名表达式：
+          ES6允许用表达式作为属性名，但是一定要将表达式放在方括号内。
+          const obj = {
+           ["he"+"llo"](){
+             return "Hi";
+            }
+          }
+          obj.hello();  //"Hi"
+          注意点：属性的简洁表示法和属性名表达式不能同时使用，否则会报错。
+          const hello = "Hello";
+          const obj = {
+           [hello]
+          };
+          obj  //SyntaxError: Unexpected token }
+
+          const hello = "Hello";
+          const obj = {
+           [hello+"2"]:"world"
+          };
+          obj  //{Hello2: "world"}
+        对象的拓展运算符
+          拓展运算符（...）用于取出参数对象所有可遍历属性然后拷贝到当前对象。
+          用于合并两个对象
+              let age = {age: 15};
+              let name = {name: "Amy"};
+              let person = {...age, ...name};
+              person;  //{age: 15, name: "Amy"}
+           注意点：
+              自定义的属性和拓展运算符对象里面属性的相同的时候：自定义的属性在拓展运算符后面，则拓展运算符对象内部同名的属性将被覆盖掉。
+              let person = {name: "Amy", age: 15};
+              let someone = { ...person, name: "Mike", age: 17};
+              someone;  //{name: "Mike", age: 17}
+              自定义的属性在拓展运算度前面，则变成设置新对象默认属性值。
+              let person = {name: "Amy", age: 15};
+              let someone = {name: "Mike", age: 17, ...person};
+              someone;  //{name: "Amy", age: 15}
+              拓展运算符后面是空对象，没有任何效果也不会报错。
+              let a = {...{}, a: 1, b: 2};
+              a;  //{a: 1, b: 2}
+              拓展运算符后面是null或者undefined，没有效果也不会报错。
+              let b = {...null, ...undefined, a: 1, b: 2};
+              b;  //{a: 1, b: 2}
+              
+          
+  
