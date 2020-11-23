@@ -1,1 +1,63 @@
+1、class类
+  class类作为对象的模板被引入，可以通过class关键词定义类
+  class本质是一个function
+  它可以看作一个语法糖，让对象原型的写法更加清晰，更像面向对象编程的语法
+  类定义
+  类表达式可以为匿名或命名
+  // 匿名类
+let Example = class {
+    constructor(a) {
+        this.a = a;
+    }
+}
+// 命名类
+let Example = class Example {
+    constructor(a) {
+        this.a = a;
+    }
+}
+类声明
+class Example {
+    constructor(a) {
+        this.a = a;
+    }
+}
+注意点:不可重复声明
+class Example{}
+class Example{}
+// Uncaught SyntaxError: Identifier 'Example' has already been 
+// declared
+ 
+let Example1 = class{}
+class Example{}
+// Uncaught SyntaxError: Identifier 'Example' has already been 
+// declared
+
+类定义不会被提升，这意味着，必须在访问前对类进行定义，否则就报错
+类中方法不需要function关键字
+方法间不能加分号
+new Example();   使用class类
+class Example {}  定义clas类
+类的主体
+prototype
+ES6 中，prototype 仍旧存在，虽然可以直接自类中定义方法，但是其实方法还是定义在 prototype 上的。 覆盖方法 / 初始化时添加方法
+Example.prototype={
+    //methods
+}
+添加方法
+Object.assign(Example.prototype,{
+    //methods
+})
+静态属性
+  class本身的属性，即直接定义在类内部的属性，不需要实例化，es6中规定，class内部只有静态方法，没有静态属性
+  class Example {
+// 新提案
+    static a = 2;
+}
+// 目前可行写法
+Example.b = 2;
+公共属性
+class Example{}
+Example.prototype.a = 2;
+
 
