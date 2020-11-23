@@ -110,3 +110,36 @@ f.next();
   // catch outside b
   遍历器对象抛出了两个错误，第一个被 Generator 函数内部捕获，第二个因为函数体内部的catch 函数已经执行过了，不会再捕获这个错误，所以这个错误就抛出 Generator 函数体，被函数体外的 catch 捕获。
   
+  yield*  表达式
+    yield*表达式表示yield返回一个遍历器对象，用于在generator函数内部，调用另一个generator函数
+    function* callee() {
+        console.log('callee: ' + (yield));
+    }
+    function* caller() {
+        while (true) {
+            yield* callee();
+        }
+    }
+    const callerObj = caller();
+    callerObj.next();
+    // {value: undefined, done: false}
+    callerObj.next("a");
+    // callee: a
+    // {value: undefined, done: false}
+    callerObj.next("b");
+    // callee: b
+    // {value: undefined, done: false}
+
+    // 等同于
+    function* caller() {
+        while (true) {
+            for (var value of callee) {
+              yield value;
+            }
+        }
+    }
+    
+    使用场景
+        为不具备 Iterator 接口的对象提供遍历方法。
+        Reflect.ownKeys() 返回对象所有的属性，不管属性是否可枚举，包括 Symbol。
+        jane 原生是不具备 Iterator 接口无法通过 for... of遍历。这边用了 Generator 函数加上了 Iterator 接口，所以就可以遍历 jane 对象了。
