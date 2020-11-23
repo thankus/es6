@@ -1,1 +1,71 @@
+1、es6 promise对象
+是异步编程的一种解决方案
+从语法上说，promise是一个对象，从它可以获取异步操作的消息
+promise状态
+ promise异步操作有三种状态，pending（进行中），fulfilled(已成功)，rejected(已失败)，除了异步操作的结果，任何其他操作都无法改变这个状态
+ promise对象只有从pending改变为fulfilled，从pending改变为rejected的状态，只要处于fulfilled和rejected，状态就不会再变了
+const p1 = new Promise(function(resolve,reject){
+    resolve('success1');
+    resolve('success2');
+}); 
+const p2 = new Promise(function(resolve,reject){  
+    resolve('success3'); 
+    reject('reject');
+});
+p1.then(function(value){  
+    console.log(value); // success1
+});
+p2.then(function(value){ 
+    console.log(value); // success3
+});
+状态的缺点
+  无法取消promise，一旦新建他就会立即执行，无法中途取消
+  如果不设置回调函数，promise内部抛出的错误，不会反应到外部
+  当处于pending状态时，无法得知目前进展到哪一个阶段
+  
+then方法
+ then方法接收两个函数作为参数，第一个参数是promise执行成功时的回调，第二个参数是promise执行失败时的回调，两个函数只会有一个被调用
+ then方法的特点
+    在javascript事件队列的当前运行完成之前，回调函数永远不会被调用
+    const p = new Promise(function(resolve,reject){
+      resolve('success');
+    });
 
+    p.then(function(value){
+      console.log(value);
+    });
+
+    console.log('first');
+    // first
+    // success
+    通过.then形式添加的回调函数，不论什么时候，都会被调用
+    通过多次调用，可以添加多个回调函数，它们会按照插入顺序并且独立运行。
+    const p = new Promise(function(resolve,reject){
+      resolve(1);
+    }).then(function(value){ // 第一个then // 1
+      console.log(value);
+      return value * 2;
+    }).then(function(value){ // 第二个then // 2
+      console.log(value);
+    }).then(function(value){ // 第三个then // undefined
+      console.log(value);
+      return Promise.resolve('resolve'); 
+    }).then(function(value){ // 第四个then // resolve
+      console.log(value);
+      return Promise.reject('reject'); 
+    }).then(function(value){ // 第五个then //reject:reject
+      console.log('resolve:' + value);
+    }, function(err) {
+      console.log('reject:' + err);
+    });
+    then 方法将返回一个 resolved 或 rejected 状态的 Promise 对象用于链式调用，且 Promise 对象的值就是这个返回值。
+    then方法注意点：
+      简单的promise链式编程最好保持扁平化，不要嵌套promise
+      注意总是返回或终止promise链
+      const p1 = new Promise(function(resolve,reject){
+        resolve(1);
+      }).then(function(result) {
+        p2(result).then(newResult => p3(newResult));
+      }).then(() => p4());
+      创建新 Promise 但忘记返回它时，对应链条被打破，导致 p4 会与 p2 和 p3 同时进行。
+      大多数浏览器中不能终止的 Promise 链里的 rejection，建议后面都跟上 .catch(error => console.log(error));
